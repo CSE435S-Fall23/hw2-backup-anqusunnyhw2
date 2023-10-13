@@ -4,11 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-
-import static java.nio.file.StandardCopyOption.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +17,6 @@ import hw1.IntField;
 import hw1.StringField;
 import hw1.Tuple;
 import hw1.TupleDesc;
-import hw1.Type;
 
 public class HeapFileTest {
 
