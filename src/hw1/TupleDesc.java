@@ -1,3 +1,4 @@
+//Sunny Li, Anqu Liu
 package hw1;
 import java.util.*;
 
@@ -8,6 +9,7 @@ public class TupleDesc {
 
 	private Type[] types;
 	private String[] fields;
+
 	
     /**
      * Create a new TupleDesc with typeAr.length fields with fields of the
@@ -19,6 +21,12 @@ public class TupleDesc {
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
     	//your code here
+    	 if (typeAr.length != fieldAr.length) {
+             throw new IllegalArgumentException("typeAr and fieldAr must have the same length");
+         }
+
+         this.types = typeAr;
+         this.fields = fieldAr;
     }
 
     /**
@@ -26,7 +34,7 @@ public class TupleDesc {
      */
     public int numFields() {
         //your code here
-    	return 0;
+    	return types.length;
     }
 
     /**
@@ -37,8 +45,11 @@ public class TupleDesc {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public String getFieldName(int i) throws NoSuchElementException {
-        //your code here
-    	return null;
+    	if (i < 0 || i >= fields.length) {
+            throw new NoSuchElementException("Invalid field index");
+        }
+
+        return fields[i];
     }
 
     /**
@@ -49,8 +60,14 @@ public class TupleDesc {
      * @throws NoSuchElementException if no field with a matching name is found.
      */
     public int nameToId(String name) throws NoSuchElementException {
-        //your code here
-    	return 0;
+    	 for (int i = 0; i < fields.length; i++) {
+    	        if (fields[i] != null && fields[i].equals(name)) {
+    	            return i; // Return the index if a matching name is found
+    	        }
+    	    }
+
+    	    // If no matching name is found, throw a NoSuchElementException
+    	    throw new NoSuchElementException("No field with the given name found: " + name);
     }
 
     /**
@@ -61,8 +78,11 @@ public class TupleDesc {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public Type getType(int i) throws NoSuchElementException {
-        //your code here
-    	return null;
+    	if (i < 0 || i >= types.length) {
+            throw new NoSuchElementException("Invalid field index");
+        }
+
+        return types[i];
     }
 
     /**
@@ -70,8 +90,15 @@ public class TupleDesc {
      * Note that tuples from a given TupleDesc are of a fixed size.
      */
     public int getSize() {
-    	//your code here
-    	return 0;
+    	 int size = 0;
+         for (Type type : types) {
+             if (type == Type.INT) {
+                 size += 4; // 4 bytes for int
+             } else if (type == Type.STRING) {
+                 size += 129; // 1 byte for length + 128 bytes for string content
+             }
+         }
+         return size;
     }
 
     /**
@@ -83,8 +110,26 @@ public class TupleDesc {
      * @return true if the object is equal to this TupleDesc.
      */
     public boolean equals(Object o) {
-    	//your code here
-    	return false;
+    	
+    	if (this == o) {
+            return true; // Same object reference
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false; // Not the same class or null
+        }
+        TupleDesc other = (TupleDesc) o;
+
+        if (types.length != other.types.length) {
+            return false; // Different sizes
+        }
+
+        for (int i = 0; i < types.length; i++) {
+            if (!types[i].equals(other.types[i])) {
+                return false; // Different field types
+            }
+        }
+
+        return true; // Equal
     }
     
 
@@ -101,7 +146,17 @@ public class TupleDesc {
      * @return String describing this descriptor.
      */
     public String toString() {
-        //your code here
-    	return "";
+    	
+    	StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < types.length; i++) {
+            sb.append(types[i].toString());
+            if (fields[i] != null) {
+                sb.append(" (").append(fields[i]).append(")");
+            }
+            if (i < types.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }

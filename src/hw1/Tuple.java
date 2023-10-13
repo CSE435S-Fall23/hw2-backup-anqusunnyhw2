@@ -1,6 +1,8 @@
+//Sunny Li, Anqu Liu
 package hw1;
 
 import java.sql.Types;
+import java.util.Map;
 import java.util.HashMap;
 
 /**
@@ -10,18 +12,23 @@ import java.util.HashMap;
  *
  */
 public class Tuple {
-	
+	private TupleDesc tupleDesc;
+    private Map<String, Field> fieldMap;
+    private int pageId;
+	private int tupleId;
 	/**
 	 * Creates a new tuple with the given description
 	 * @param t the schema for this tuple
 	 */
 	public Tuple(TupleDesc t) {
 		//your code here
+		this.tupleDesc = t;
+        fieldMap = new HashMap<>();
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return tupleDesc;
 	}
 	
 	/**
@@ -30,11 +37,12 @@ public class Tuple {
 	 */
 	public int getPid() {
 		//your code here
-		return 0;
+		return pageId;
 	}
 
 	public void setPid(int pid) {
 		//your code here
+		this.pageId = pid;
 	}
 
 	/**
@@ -43,15 +51,17 @@ public class Tuple {
 	 */
 	public int getId() {
 		//your code here
-		return 0;
+		return tupleId;
 	}
 
 	public void setId(int id) {
 		//your code here
+		this.tupleId = id;
 	}
 	
 	public void setDesc(TupleDesc td) {
 		//your code here;
+		this.tupleDesc = td;
 	}
 	
 	/**
@@ -61,11 +71,17 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		//your code here
+		if (i < 0 || i >= tupleDesc.numFields()) {
+            throw new IllegalArgumentException("Invalid field index");
+        }
+        fieldMap.put(tupleDesc.getFieldName(i), v);
 	}
 	
 	public Field getField(int i) {
-		//your code here
-		return null;
+		if (i < 0 || i >= tupleDesc.numFields()) {
+            throw new IllegalArgumentException("Invalid field index");
+        }
+        return fieldMap.get(tupleDesc.getFieldName(i));
 	}
 	
 	/**
@@ -74,8 +90,19 @@ public class Tuple {
 	 * the String columns to readable text).
 	 */
 	public String toString() {
-		//your code here
-		return "";
+		 StringBuilder sb = new StringBuilder();
+	        for (int i = 0; i < tupleDesc.numFields(); i++) {
+	            Field field = getField(i);
+	            if (field.getType() == Type.INT) {
+	                sb.append(((IntField) field).getValue()); // Convert IntField to readable text
+	            } else if (field.getType() == Type.STRING) {
+	                sb.append(((StringField) field).getValue()); // Convert StringField to readable text
+	            }
+	            if (i < tupleDesc.numFields() - 1) {
+	                sb.append(", ");
+	            }
+	        }
+	        return sb.toString();
 	}
 }
 	

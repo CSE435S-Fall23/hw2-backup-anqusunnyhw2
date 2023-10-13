@@ -1,3 +1,4 @@
+//Anqu Liu, SunnyLi
 package hw1;
 
 import java.io.BufferedReader;
@@ -15,13 +16,28 @@ import java.util.*;
  */
 
 public class Catalog {
-	
+	private Map<Integer, TableInfo> tableInfoMap;
+
+    private class TableInfo {
+        HeapFile file;
+        String name;
+        String pkeyField;
+
+        public TableInfo(HeapFile file, String name, String pkeyField) {
+            this.file = file;
+            this.name = name;
+            this.pkeyField = pkeyField;
+        }
+    }
     /**
      * Constructor.
      * Creates a new, empty catalog.
      */
     public Catalog() {
     	//your code here
+    	
+    	tableInfoMap = new HashMap<Integer,TableInfo>();
+    
     }
 
     /**
@@ -34,6 +50,8 @@ public class Catalog {
      */
     public void addTable(HeapFile file, String name, String pkeyField) {
     	//your code here
+    	int tableId = file.getId();
+        tableInfoMap.put(tableId, new TableInfo(file, name, pkeyField));
     }
 
     public void addTable(HeapFile file, String name) {
@@ -44,9 +62,13 @@ public class Catalog {
      * Return the id of the table with a specified name,
      * @throws NoSuchElementException if the table doesn't exist
      */
-    public int getTableId(String name) {
-    	//your code here
-    	return 0;
+    public int getTableId(String name) throws NoSuchElementException {
+    	for (Map.Entry<Integer, TableInfo> entry : tableInfoMap.entrySet()) {
+            if (entry.getValue().name.equals(name)) {
+                return entry.getKey();
+            }
+        }
+        throw new NoSuchElementException("Table not found: " + name);
     }
 
     /**
@@ -55,8 +77,11 @@ public class Catalog {
      *     function passed to addTable
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
-    	//your code here
-    	return null;
+    	if (tableInfoMap.containsKey(tableid)) {
+            return tableInfoMap.get(tableid).file.getTupleDesc();
+        } else {
+            throw new NoSuchElementException("Table not found with ID: " + tableid);
+        }
     }
 
     /**
@@ -66,28 +91,38 @@ public class Catalog {
      *     function passed to addTable
      */
     public HeapFile getDbFile(int tableid) throws NoSuchElementException {
-    	//your code here
-    	return null;
+    	if (tableInfoMap.containsKey(tableid)) {
+            return tableInfoMap.get(tableid).file;
+        } else {
+            throw new NoSuchElementException("Table not found with ID: " + tableid);
+        }
     }
 
     /** Delete all tables from the catalog */
     public void clear() {
     	//your code here
+    	tableInfoMap.clear();
     }
 
     public String getPrimaryKey(int tableid) {
-    	//your code here
-    	return null;
+    	if (tableInfoMap.containsKey(tableid)) {
+            return tableInfoMap.get(tableid).pkeyField;
+        } else {
+            throw new NoSuchElementException("Table not found with ID: " + tableid);
+        }
     }
 
     public Iterator<Integer> tableIdIterator() {
     	//your code here
-    	return null;
+   	 return tableInfoMap.keySet().iterator();
     }
 
     public String getTableName(int id) {
-    	//your code here
-    	return null;
+    	if (tableInfoMap.containsKey(id)) {
+            return tableInfoMap.get(id).name;
+        } else {
+            throw new NoSuchElementException("Table not found with ID: " + id);
+        }
     }
     
     /**
